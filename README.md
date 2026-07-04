@@ -46,10 +46,10 @@ Coming next: live vendor map, real-time tracking, favorites, notifications.
 
 | File | Purpose |
 |------|---------|
-| `env/env.sample` | Template |
-| `env/env.development` | Local dev (Android emulator → `10.0.2.2`) |
-| `env/env.staging` | Staging API URLs |
-| `env/env.production` | Production API URLs |
+| `env/env.sample` | Template (committed) |
+| `env/env.development` | Local dev — `cp env/env.sample env/env.development` (git-ignored) |
+| `env/env.staging` | Staging API URLs (git-ignored) |
+| `env/env.production` | Production API URLs (git-ignored) |
 
 Select environment at build/run time:
 
@@ -70,6 +70,7 @@ flutter run --dart-define=ENV=production
 ```bash
 git clone <repo-url> bitetrack-mobile
 cd bitetrack-mobile
+cp env/env.sample env/env.development
 flutter pub get
 dart run build_runner build --delete-conflicting-outputs
 flutter run

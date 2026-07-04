@@ -42,3 +42,7 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Environment — only env/env.sample is tracked; copy it per environment locally.
+env/env.*
+!env/env.sample
