@@ -1,0 +1,22 @@
+{
+  "dart.flutterSdkPath": "C:\\src\\flutter",
+  "dart.sdkPath": "C:\\src\\flutter\\bin\\cache\\dart-sdk",
+  "dart.lineLength": 100,
+  "dart.previewFlutterUiGuides": true,
+  "dart.previewFlutterUiGuidesCustomTracking": true,
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit",
+    "source.organizeImports": "explicit"
+  },
+  "[dart]": {
+    "editor.formatOnSave": true,
+    "editor.selectionHighlight": false,
+    "editor.suggestSelection": "first",
+    "editor.tabCompletion": "onlySnippets",
+    "editor.wordBasedSuggestions": "off"
+  },
+  "files.associations": {
+    "*.dart": "dart"
+  }
+}
