@@ -1,6 +1,5 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-/// Typed, immutable environment configuration loaded from bundled `.env` assets.
 class EnvConfig {
   EnvConfig._({
     required this.appName,
@@ -28,8 +27,6 @@ class EnvConfig {
     return config;
   }
 
-  /// Loads `env/env.<environment>` where environment comes from
-  /// `--dart-define=ENV=development|staging|production`.
   static Future<EnvConfig> load() async {
     const environment = String.fromEnvironment('ENV', defaultValue: 'development');
     await dotenv.load(fileName: 'env/env.$environment');

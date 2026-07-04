@@ -2,7 +2,6 @@ import 'package:equatable/equatable.dart';
 
 enum UserRole { customer, vendor, admin }
 
-/// Domain entity — no JSON/serialization concerns here.
 class User extends Equatable {
   const User({
     required this.id,

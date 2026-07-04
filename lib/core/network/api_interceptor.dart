@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:bitetrack/core/storage/token_storage.dart';
 
-/// Attaches the JWT access token to outgoing requests.
 class ApiInterceptor extends Interceptor {
   ApiInterceptor(this._tokenStorage);
 

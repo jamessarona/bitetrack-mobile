@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:bitetrack/features/auth/presentation/bloc/auth_bloc.dart';
 
-/// Placeholder home screen — vendor map and tracking land here in MVP phase 2.
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 

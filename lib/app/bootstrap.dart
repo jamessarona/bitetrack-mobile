@@ -4,7 +4,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:bitetrack/core/config/env_config.dart';
 import 'package:bitetrack/core/di/injection.dart';
 
-/// Initializes all app dependencies before `runApp`.
 Future<void> bootstrap(Future<void> Function() run) async {
   WidgetsFlutterBinding.ensureInitialized();
 

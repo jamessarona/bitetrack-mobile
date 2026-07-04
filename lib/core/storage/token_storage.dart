@@ -1,8 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:injectable/injectable.dart';
 
-/// Persists auth tokens securely in platform shared preferences.
-/// For production, consider flutter_secure_storage.
 @lazySingleton
 class TokenStorage {
   TokenStorage(this._prefs);

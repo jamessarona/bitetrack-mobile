@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-/// BiteTrack design tokens and Material 3 theme.
 class AppTheme {
   AppTheme._();
 
