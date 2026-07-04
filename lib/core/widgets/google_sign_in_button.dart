@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:bitetrack/core/theme/app_colors.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class GoogleSignInButton extends StatelessWidget {
   const GoogleSignInButton({
@@ -11,14 +11,16 @@ class GoogleSignInButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final bool loading;
 
+  static const _googleIconAsset = 'assets/icons/google.svg';
+
   @override
   Widget build(BuildContext context) {
     return OutlinedButton(
       onPressed: loading ? null : onPressed,
       style: OutlinedButton.styleFrom(
-        backgroundColor: AppColors.surface,
-        foregroundColor: AppColors.textPrimary,
-        side: const BorderSide(color: AppColors.border),
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        foregroundColor: Theme.of(context).colorScheme.onSurface,
+        side: BorderSide(color: Theme.of(context).colorScheme.outline),
       ),
       child: loading
           ? const SizedBox(
@@ -29,23 +31,11 @@ class GoogleSignInButton extends StatelessWidget {
           : Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Container(
+                SvgPicture.asset(
+                  _googleIconAsset,
                   width: 22,
                   height: 22,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(4),
-                    border: Border.all(color: AppColors.border),
-                  ),
-                  alignment: Alignment.center,
-                  child: const Text(
-                    'G',
-                    style: TextStyle(
-                      color: Color(0xFF4285F4),
-                      fontWeight: FontWeight.w700,
-                      fontSize: 14,
-                    ),
-                  ),
+                  semanticsLabel: 'Google',
                 ),
                 const SizedBox(width: 12),
                 const Text('Continue with Google'),

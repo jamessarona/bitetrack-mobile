@@ -17,13 +17,14 @@ class _RegisterPageState extends State<RegisterPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _firstNameController = TextEditingController();
-  String _role = 'CUSTOMER';
+  final _lastNameController = TextEditingController();
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
     _firstNameController.dispose();
+    _lastNameController.dispose();
     super.dispose();
   }
 
@@ -33,12 +34,15 @@ class _RegisterPageState extends State<RegisterPage> {
           AuthRegisterRequested(
             email: _emailController.text.trim(),
             password: _passwordController.text,
-            role: _role,
-            firstName: _firstNameController.text.trim().isEmpty
-                ? null
-                : _firstNameController.text.trim(),
+            firstName: _optionalText(_firstNameController.text),
+            lastName: _optionalText(_lastNameController.text),
           ),
         );
+  }
+
+  String? _optionalText(String value) {
+    final trimmed = value.trim();
+    return trimmed.isEmpty ? null : trimmed;
   }
 
   void _googleSignIn() {
@@ -61,7 +65,7 @@ class _RegisterPageState extends State<RegisterPage> {
         final loading = state is AuthLoading;
         return AuthPageShell(
           title: 'Create account',
-          subtitle: 'Join BiteTrack to find street food and mobile vendors near you.',
+          subtitle: 'Join BiteTrack to discover vendors near you. Vendor setup comes later.',
           child: Form(
             key: _formKey,
             child: Column(
@@ -77,8 +81,19 @@ class _RegisterPageState extends State<RegisterPage> {
                 TextFormField(
                   controller: _firstNameController,
                   textInputAction: TextInputAction.next,
+                  textCapitalization: TextCapitalization.words,
                   decoration: const InputDecoration(
-                    labelText: 'First name (optional)',
+                    labelText: 'First name',
+                    prefixIcon: Icon(Icons.person_outline),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _lastNameController,
+                  textInputAction: TextInputAction.next,
+                  textCapitalization: TextCapitalization.words,
+                  decoration: const InputDecoration(
+                    labelText: 'Last name (optional)',
                     prefixIcon: Icon(Icons.person_outline),
                   ),
                 ),
@@ -98,31 +113,13 @@ class _RegisterPageState extends State<RegisterPage> {
                 TextFormField(
                   controller: _passwordController,
                   obscureText: true,
-                  textInputAction: TextInputAction.next,
+                  textInputAction: TextInputAction.done,
                   decoration: const InputDecoration(
                     labelText: 'Password',
                     prefixIcon: Icon(Icons.lock_outline),
                   ),
                   validator: (v) =>
                       v == null || v.length < 8 ? 'Minimum 8 characters' : null,
-                ),
-                const SizedBox(height: 16),
-                DropdownButtonFormField<String>(
-                  value: _role,
-                  decoration: const InputDecoration(
-                    labelText: 'I am a',
-                    prefixIcon: Icon(Icons.badge_outlined),
-                  ),
-                  borderRadius: BorderRadius.circular(14),
-                  items: const [
-                    DropdownMenuItem(value: 'CUSTOMER', child: Text('Customer')),
-                    DropdownMenuItem(value: 'VENDOR', child: Text('Vendor')),
-                  ],
-                  onChanged: loading
-                      ? null
-                      : (value) {
-                          if (value != null) setState(() => _role = value);
-                        },
                 ),
                 const SizedBox(height: 24),
                 ElevatedButton(

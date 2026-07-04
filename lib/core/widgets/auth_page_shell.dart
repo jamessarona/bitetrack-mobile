@@ -18,9 +18,13 @@ class AuthPageShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
       body: DecoratedBox(
-        decoration: const BoxDecoration(gradient: AppColors.softGradient),
+        decoration: BoxDecoration(
+          gradient: AppColors.softGradientFor(Theme.of(context).brightness),
+        ),
         child: SafeArea(
           child: Center(
             child: SingleChildScrollView(
@@ -38,7 +42,7 @@ class AuthPageShell extends StatelessWidget {
                       title,
                       style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                             fontWeight: FontWeight.w800,
-                            color: AppColors.textPrimary,
+                            color: colorScheme.onSurface,
                             letterSpacing: -0.5,
                           ),
                     ),
@@ -46,7 +50,7 @@ class AuthPageShell extends StatelessWidget {
                     Text(
                       subtitle,
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: AppColors.textSecondary,
+                            color: colorScheme.onSurfaceVariant,
                             height: 1.4,
                           ),
                     ),
@@ -75,19 +79,21 @@ class AuthDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final dividerColor = Theme.of(context).colorScheme.outline;
+
     return Row(
       children: [
-        const Expanded(child: Divider(color: AppColors.border)),
+        Expanded(child: Divider(color: dividerColor)),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Text(
             label,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: AppColors.textSecondary,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
           ),
         ),
-        const Expanded(child: Divider(color: AppColors.border)),
+        Expanded(child: Divider(color: dividerColor)),
       ],
     );
   }
