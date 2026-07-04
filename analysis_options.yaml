@@ -8,6 +8,7 @@ analyzer:
   errors:
     missing_return: error
     dead_code: warning
+    deprecated_member_use: error
 
 linter:
   rules:
@@ -18,8 +19,11 @@ linter:
     prefer_const_declarations: true
     prefer_final_fields: true
     prefer_final_locals: true
+    prefer_initializing_formals: true
     prefer_single_quotes: true
     sort_pub_dependencies: true
     unawaited_futures: true
+    unnecessary_underscores: true
     use_key_in_widget_constructors: true
+    use_null_aware_elements: true
     require_trailing_commas: true

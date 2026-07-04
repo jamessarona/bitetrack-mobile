@@ -11,6 +11,7 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:bitetrack/core/network/dio_client.dart' as _i865;
 import 'package:bitetrack/core/storage/token_storage.dart' as _i311;
+import 'package:bitetrack/core/theme/theme_cubit.dart' as _i120;
 import 'package:bitetrack/features/auth/data/datasources/auth_remote_datasource.dart'
     as _i806;
 import 'package:bitetrack/features/auth/data/repositories/auth_repository_impl.dart'
@@ -34,6 +35,7 @@ extension GetItInjectableX on _i174.GetIt {
     _i526.EnvironmentFilter? environmentFilter,
   }) {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
+    gh.lazySingleton<_i120.ThemeCubit>(() => _i120.ThemeCubit());
     gh.lazySingleton<_i584.GoogleSignInService>(
       () => _i584.GoogleSignInService(),
     );
@@ -70,6 +72,12 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i642.AuthRepository>(),
         gh<_i584.GoogleSignInService>(),
       ),
+    );
+    gh.factory<_i108.UpdateThemePreferenceUseCase>(
+      () => _i108.UpdateThemePreferenceUseCase(gh<_i642.AuthRepository>()),
+    );
+    gh.factory<_i108.UpdateProfileUseCase>(
+      () => _i108.UpdateProfileUseCase(gh<_i642.AuthRepository>()),
     );
     gh.factory<_i1041.AuthBloc>(
       () => _i1041.AuthBloc(

@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:bitetrack/core/theme/theme_preference.dart';
 import 'package:bitetrack/features/auth/data/models/user_model.dart';
 import 'package:bitetrack/features/auth/domain/entities/user.dart';
 
@@ -31,6 +32,19 @@ void main() {
 
       expect(entity.role, UserRole.vendor);
       expect(entity.displayName, 'Mang');
+    });
+
+    test('fromJson maps theme preference', () {
+      final model = UserModel.fromJson({
+        'id': '11111111-1111-1111-1111-111111111111',
+        'email': 'user@test.com',
+        'role': 'CUSTOMER',
+        'status': 'ACTIVE',
+        'themePreference': 'DARK',
+      });
+
+      expect(model.themePreference, 'DARK');
+      expect(model.toEntity().themePreference, AppThemePreference.dark);
     });
   });
 

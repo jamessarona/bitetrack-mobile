@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:bitetrack/core/error/failures.dart';
 import 'package:bitetrack/core/network/dio_client.dart';
+import 'package:bitetrack/core/theme/theme_preference.dart';
 import 'package:bitetrack/features/auth/data/models/user_model.dart';
 
 @lazySingleton
@@ -28,7 +29,6 @@ class AuthRemoteDataSource {
   Future<AuthResponseModel> register({
     required String email,
     required String password,
-    required String role,
     String? firstName,
     String? lastName,
   }) async {
@@ -38,9 +38,8 @@ class AuthRemoteDataSource {
         data: {
           'email': email,
           'password': password,
-          'role': role,
-          if (firstName != null) 'firstName': firstName,
-          if (lastName != null) 'lastName': lastName,
+          'firstName': ?firstName,
+          'lastName': ?lastName,
         },
       );
       return AuthResponseModel.fromJson(response.data!);
@@ -64,6 +63,42 @@ class AuthRemoteDataSource {
   Future<UserModel> me() async {
     try {
       final response = await _client.dio.get<Map<String, dynamic>>('/auth/me');
+      final data = response.data!['data'] as Map<String, dynamic>;
+      return UserModel.fromJson(data);
+    } on DioException catch (e) {
+      throw _mapDioError(e);
+    }
+  }
+
+  Future<UserModel> updateThemePreference({
+    required AppThemePreference themePreference,
+  }) async {
+    try {
+      final response = await _client.dio.patch<Map<String, dynamic>>(
+        '/auth/me/preferences',
+        data: {'themePreference': themePreference.apiValue},
+      );
+      final data = response.data!['data'] as Map<String, dynamic>;
+      return UserModel.fromJson(data);
+    } on DioException catch (e) {
+      throw _mapDioError(e);
+    }
+  }
+
+  Future<UserModel> updateProfile({
+    String? firstName,
+    String? lastName,
+    String? phone,
+  }) async {
+    try {
+      final response = await _client.dio.patch<Map<String, dynamic>>(
+        '/auth/me/profile',
+        data: {
+          'firstName': ?firstName,
+          'lastName': ?lastName,
+          'phone': ?phone,
+        },
+      );
       final data = response.data!['data'] as Map<String, dynamic>;
       return UserModel.fromJson(data);
     } on DioException catch (e) {

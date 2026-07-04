@@ -1,4 +1,5 @@
 import 'package:injectable/injectable.dart';
+import 'package:bitetrack/core/theme/theme_preference.dart';
 import 'package:bitetrack/core/storage/token_storage.dart';
 import 'package:bitetrack/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:bitetrack/features/auth/data/services/google_sign_in_service.dart';
@@ -34,14 +35,12 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<AuthSession> register({
     required String email,
     required String password,
-    required String role,
     String? firstName,
     String? lastName,
   }) async {
     final response = await _remote.register(
       email: email,
       password: password,
-      role: role,
       firstName: firstName,
       lastName: lastName,
     );
@@ -80,6 +79,22 @@ class AuthRepositoryImpl implements AuthRepository {
       await _tokenStorage.clear();
       return null;
     }
+  }
+
+  @override
+  Future<User> updateThemePreference(AppThemePreference preference) async {
+    final model = await _remote.updateThemePreference(themePreference: preference);
+    return model.toEntity();
+  }
+
+  @override
+  Future<User> updateProfile(UpdateProfileInput input) async {
+    final model = await _remote.updateProfile(
+      firstName: input.firstName,
+      lastName: input.lastName,
+      phone: input.phone,
+    );
+    return model.toEntity();
   }
 
   @override

@@ -1,3 +1,4 @@
+import 'package:bitetrack/core/theme/theme_preference.dart';
 import 'package:bitetrack/features/auth/domain/entities/user.dart';
 
 class AuthSession {
@@ -17,11 +18,12 @@ abstract class AuthRepository {
   Future<AuthSession> register({
     required String email,
     required String password,
-    required String role,
     String? firstName,
     String? lastName,
   });
   Future<AuthSession> googleSignIn({required String idToken});
   Future<User?> getCurrentUser();
+  Future<User> updateThemePreference(AppThemePreference preference);
+  Future<User> updateProfile(UpdateProfileInput input);
   Future<void> logout();
 }

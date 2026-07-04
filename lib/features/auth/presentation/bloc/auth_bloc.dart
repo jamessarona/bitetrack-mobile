@@ -11,22 +11,18 @@ part 'auth_state.dart';
 @injectable
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc({
-    required GetCurrentUserUseCase getCurrentUser,
-    required LoginUseCase login,
-    required RegisterUseCase register,
-    required LogoutUseCase logout,
-    required GoogleSignInUseCase googleSignIn,
-  })  : _getCurrentUser = getCurrentUser,
-        _login = login,
-        _register = register,
-        _logout = logout,
-        _googleSignIn = googleSignIn,
-        super(const AuthInitial()) {
+    required this._getCurrentUser,
+    required this._login,
+    required this._register,
+    required this._logout,
+    required this._googleSignIn,
+  }) : super(const AuthInitial()) {
     on<AuthAppStarted>(_onAppStarted);
     on<AuthLoginRequested>(_onLoginRequested);
     on<AuthRegisterRequested>(_onRegisterRequested);
     on<AuthGoogleSignInRequested>(_onGoogleSignInRequested);
     on<AuthLogoutRequested>(_onLogoutRequested);
+    on<AuthUserUpdated>(_onUserUpdated);
   }
 
   final GetCurrentUserUseCase _getCurrentUser;
@@ -76,7 +72,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final session = await _register(
         email: event.email,
         password: event.password,
-        role: event.role,
         firstName: event.firstName,
         lastName: event.lastName,
       );
@@ -110,5 +105,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(const AuthLoading());
     await _logout();
     emit(const AuthUnauthenticated());
+  }
+
+  void _onUserUpdated(
+    AuthUserUpdated event,
+    Emitter<AuthState> emit,
+  ) {
+    emit(AuthAuthenticated(event.user));
   }
 }

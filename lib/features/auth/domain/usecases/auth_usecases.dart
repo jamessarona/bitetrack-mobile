@@ -1,5 +1,6 @@
 import 'package:injectable/injectable.dart';
 import 'package:bitetrack/core/error/failures.dart';
+import 'package:bitetrack/core/theme/theme_preference.dart';
 import 'package:bitetrack/features/auth/data/services/google_sign_in_service.dart';
 import 'package:bitetrack/features/auth/domain/entities/user.dart';
 import 'package:bitetrack/features/auth/domain/repositories/auth_repository.dart';
@@ -24,14 +25,12 @@ class RegisterUseCase {
   Future<AuthSession> call({
     required String email,
     required String password,
-    required String role,
     String? firstName,
     String? lastName,
   }) {
     return _repository.register(
       email: email,
       password: password,
-      role: role,
       firstName: firstName,
       lastName: lastName,
     );
@@ -69,5 +68,27 @@ class GoogleSignInUseCase {
       throw const AuthFailure('Google sign-in was cancelled');
     }
     return _repository.googleSignIn(idToken: idToken);
+  }
+}
+
+@injectable
+class UpdateThemePreferenceUseCase {
+  UpdateThemePreferenceUseCase(this._repository);
+
+  final AuthRepository _repository;
+
+  Future<User> call(AppThemePreference preference) {
+    return _repository.updateThemePreference(preference);
+  }
+}
+
+@injectable
+class UpdateProfileUseCase {
+  UpdateProfileUseCase(this._repository);
+
+  final AuthRepository _repository;
+
+  Future<User> call(UpdateProfileInput input) {
+    return _repository.updateProfile(input);
   }
 }

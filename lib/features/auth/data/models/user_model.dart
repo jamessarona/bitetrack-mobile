@@ -1,3 +1,4 @@
+import 'package:bitetrack/core/theme/theme_preference.dart';
 import 'package:bitetrack/features/auth/domain/entities/user.dart';
 
 class UserModel {
@@ -8,6 +9,8 @@ class UserModel {
     required this.status,
     this.firstName,
     this.lastName,
+    this.phone,
+    this.themePreference = 'SYSTEM',
   });
 
   final String id;
@@ -16,6 +19,8 @@ class UserModel {
   final String status;
   final String? firstName;
   final String? lastName;
+  final String? phone;
+  final String themePreference;
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
@@ -25,6 +30,8 @@ class UserModel {
       status: json['status'] as String,
       firstName: json['firstName'] as String?,
       lastName: json['lastName'] as String?,
+      phone: json['phone'] as String?,
+      themePreference: json['themePreference'] as String? ?? 'SYSTEM',
     );
   }
 
@@ -36,6 +43,8 @@ class UserModel {
       status: status,
       firstName: firstName,
       lastName: lastName,
+      phone: phone,
+      themePreference: AppThemePreferenceX.fromApi(themePreference),
     );
   }
 
