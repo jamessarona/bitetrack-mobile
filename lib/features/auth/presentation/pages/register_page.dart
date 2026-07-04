@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:bitetrack/core/widgets/auth_page_shell.dart';
+import 'package:bitetrack/core/widgets/google_sign_in_button.dart';
 import 'package:bitetrack/features/auth/presentation/bloc/auth_bloc.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -39,84 +41,113 @@ class _RegisterPageState extends State<RegisterPage> {
         );
   }
 
+  void _googleSignIn() {
+    context.read<AuthBloc>().add(const AuthGoogleSignInRequested());
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Create account')),
-      body: BlocConsumer<AuthBloc, AuthState>(
-        listener: (context, state) {
-          if (state is AuthAuthenticated) {
-            context.go('/home');
-          } else if (state is AuthUnauthenticated && state.message != null) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message!)),
-            );
-          }
-        },
-        builder: (context, state) {
-          final loading = state is AuthLoading;
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  TextFormField(
-                    controller: _firstNameController,
-                    decoration: const InputDecoration(labelText: 'First name (optional)'),
-                  ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _emailController,
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: const InputDecoration(labelText: 'Email'),
-                    validator: (v) =>
-                        v == null || !v.contains('@') ? 'Enter a valid email' : null,
-                  ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _passwordController,
-                    obscureText: true,
-                    decoration: const InputDecoration(labelText: 'Password'),
-                    validator: (v) =>
-                        v == null || v.length < 8 ? 'Minimum 8 characters' : null,
-                  ),
-                  const SizedBox(height: 16),
-                  DropdownButtonFormField<String>(
-                    value: _role,
-                    decoration: const InputDecoration(labelText: 'I am a'),
-                    items: const [
-                      DropdownMenuItem(value: 'CUSTOMER', child: Text('Customer')),
-                      DropdownMenuItem(value: 'VENDOR', child: Text('Vendor')),
-                    ],
-                    onChanged: loading
-                        ? null
-                        : (value) {
-                            if (value != null) setState(() => _role = value);
-                          },
-                  ),
-                  const SizedBox(height: 24),
-                  ElevatedButton(
-                    onPressed: loading ? null : _submit,
-                    child: loading
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : const Text('Register'),
-                  ),
-                  TextButton(
-                    onPressed: loading ? null : () => context.go('/login'),
-                    child: const Text('Already have an account? Sign in'),
-                  ),
-                ],
-              ),
-            ),
+    return BlocConsumer<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state is AuthAuthenticated) {
+          context.go('/home');
+        } else if (state is AuthUnauthenticated && state.message != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.message!)),
           );
-        },
-      ),
+        }
+      },
+      builder: (context, state) {
+        final loading = state is AuthLoading;
+        return AuthPageShell(
+          title: 'Create account',
+          subtitle: 'Join BiteTrack to find street food and mobile vendors near you.',
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                GoogleSignInButton(
+                  loading: loading,
+                  onPressed: _googleSignIn,
+                ),
+                const SizedBox(height: 20),
+                const AuthDivider(label: 'or register with email'),
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: _firstNameController,
+                  textInputAction: TextInputAction.next,
+                  decoration: const InputDecoration(
+                    labelText: 'First name (optional)',
+                    prefixIcon: Icon(Icons.person_outline),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  textInputAction: TextInputAction.next,
+                  decoration: const InputDecoration(
+                    labelText: 'Email',
+                    prefixIcon: Icon(Icons.email_outlined),
+                  ),
+                  validator: (v) =>
+                      v == null || !v.contains('@') ? 'Enter a valid email' : null,
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _passwordController,
+                  obscureText: true,
+                  textInputAction: TextInputAction.next,
+                  decoration: const InputDecoration(
+                    labelText: 'Password',
+                    prefixIcon: Icon(Icons.lock_outline),
+                  ),
+                  validator: (v) =>
+                      v == null || v.length < 8 ? 'Minimum 8 characters' : null,
+                ),
+                const SizedBox(height: 16),
+                DropdownButtonFormField<String>(
+                  value: _role,
+                  decoration: const InputDecoration(
+                    labelText: 'I am a',
+                    prefixIcon: Icon(Icons.badge_outlined),
+                  ),
+                  borderRadius: BorderRadius.circular(14),
+                  items: const [
+                    DropdownMenuItem(value: 'CUSTOMER', child: Text('Customer')),
+                    DropdownMenuItem(value: 'VENDOR', child: Text('Vendor')),
+                  ],
+                  onChanged: loading
+                      ? null
+                      : (value) {
+                          if (value != null) setState(() => _role = value);
+                        },
+                ),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: loading ? null : _submit,
+                  child: loading
+                      ? const SizedBox(
+                          height: 22,
+                          width: 22,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : const Text('Create account'),
+                ),
+                const SizedBox(height: 8),
+                TextButton(
+                  onPressed: loading ? null : () => context.go('/login'),
+                  child: const Text('Already have an account? Sign in'),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

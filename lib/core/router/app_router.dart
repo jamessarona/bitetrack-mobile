@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:bitetrack/core/presentation/splash_page.dart';
 import 'package:bitetrack/core/di/injection.dart';
 import 'package:bitetrack/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:bitetrack/features/auth/presentation/pages/login_page.dart';
@@ -41,7 +42,7 @@ class AppRouter {
     routes: [
       GoRoute(
         path: '/splash',
-        builder: (context, state) => const _SplashPage(),
+        builder: (context, state) => const SplashPage(),
       ),
       GoRoute(
         path: '/login',
@@ -71,28 +72,6 @@ class _AuthRefreshListenable extends ChangeNotifier {
   void dispose() {
     unawaited(_subscription.cancel());
     super.dispose();
-  }
-}
-
-class _SplashPage extends StatelessWidget {
-  const _SplashPage();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.restaurant, size: 64),
-            SizedBox(height: 16),
-            Text('BiteTrack'),
-            SizedBox(height: 24),
-            CircularProgressIndicator(),
-          ],
-        ),
-      ),
-    );
   }
 }
 
