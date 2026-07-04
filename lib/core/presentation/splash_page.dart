@@ -60,16 +60,10 @@ class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateM
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Container(
-                    padding: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.12),
-                      borderRadius: BorderRadius.circular(28),
-                    ),
-                    child: const AppLogo(
-                      size: 112,
-                      showLabel: false,
-                    ),
+                  const AppLogo(
+                    size: 112,
+                    showLabel: false,
+                    plain: true,
                   ),
                   const SizedBox(height: 24),
                   const Text(
@@ -85,7 +79,7 @@ class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateM
                   Text(
                     'Track your next bite',
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.88),
+                      color: Colors.white.withValues(alpha: 0.88),
                       fontSize: 16,
                     ),
                   ),
@@ -95,7 +89,7 @@ class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateM
                     height: 28,
                     child: CircularProgressIndicator(
                       strokeWidth: 2.5,
-                      color: Colors.white.withOpacity(0.95),
+                      color: Colors.white.withValues(alpha: 0.95),
                     ),
                   ),
                 ],
