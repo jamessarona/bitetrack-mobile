@@ -1,15 +1,17 @@
 import 'package:injectable/injectable.dart';
 import 'package:bitetrack/core/storage/token_storage.dart';
 import 'package:bitetrack/features/auth/data/datasources/auth_remote_datasource.dart';
+import 'package:bitetrack/features/auth/data/services/google_sign_in_service.dart';
 import 'package:bitetrack/features/auth/domain/entities/user.dart';
 import 'package:bitetrack/features/auth/domain/repositories/auth_repository.dart';
 
 @LazySingleton(as: AuthRepository)
 class AuthRepositoryImpl implements AuthRepository {
-  AuthRepositoryImpl(this._remote, this._tokenStorage);
+  AuthRepositoryImpl(this._remote, this._tokenStorage, this._googleSignIn);
 
   final AuthRemoteDataSource _remote;
   final TokenStorage _tokenStorage;
+  final GoogleSignInService _googleSignIn;
 
   @override
   Future<AuthSession> login({
@@ -55,6 +57,20 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<AuthSession> googleSignIn({required String idToken}) async {
+    final response = await _remote.googleSignIn(idToken: idToken);
+    await _tokenStorage.saveTokens(
+      accessToken: response.accessToken,
+      refreshToken: response.refreshToken,
+    );
+    return AuthSession(
+      user: response.user.toEntity(),
+      accessToken: response.accessToken,
+      refreshToken: response.refreshToken,
+    );
+  }
+
+  @override
   Future<User?> getCurrentUser() async {
     if (!_tokenStorage.hasTokens) return null;
     try {
@@ -74,6 +90,7 @@ class AuthRepositoryImpl implements AuthRepository {
         await _remote.logout(refreshToken: refresh);
       } catch (_) {}
     }
+    await _googleSignIn.signOut();
     await _tokenStorage.clear();
   }
 }

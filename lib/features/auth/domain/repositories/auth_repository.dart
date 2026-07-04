@@ -21,6 +21,7 @@ abstract class AuthRepository {
     String? firstName,
     String? lastName,
   });
+  Future<AuthSession> googleSignIn({required String idToken});
   Future<User?> getCurrentUser();
   Future<void> logout();
 }

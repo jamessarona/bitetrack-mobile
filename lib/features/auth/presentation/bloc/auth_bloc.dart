@@ -15,14 +15,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required LoginUseCase login,
     required RegisterUseCase register,
     required LogoutUseCase logout,
+    required GoogleSignInUseCase googleSignIn,
   })  : _getCurrentUser = getCurrentUser,
         _login = login,
         _register = register,
         _logout = logout,
+        _googleSignIn = googleSignIn,
         super(const AuthInitial()) {
     on<AuthAppStarted>(_onAppStarted);
     on<AuthLoginRequested>(_onLoginRequested);
     on<AuthRegisterRequested>(_onRegisterRequested);
+    on<AuthGoogleSignInRequested>(_onGoogleSignInRequested);
     on<AuthLogoutRequested>(_onLogoutRequested);
   }
 
@@ -30,6 +33,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final LoginUseCase _login;
   final RegisterUseCase _register;
   final LogoutUseCase _logout;
+  final GoogleSignInUseCase _googleSignIn;
 
   Future<void> _onAppStarted(
     AuthAppStarted event,
@@ -81,6 +85,21 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthUnauthenticated(message: e.message));
     } catch (_) {
       emit(const AuthUnauthenticated(message: 'Registration failed'));
+    }
+  }
+
+  Future<void> _onGoogleSignInRequested(
+    AuthGoogleSignInRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(const AuthLoading());
+    try {
+      final session = await _googleSignIn();
+      emit(AuthAuthenticated(session.user));
+    } on Failure catch (e) {
+      emit(AuthUnauthenticated(message: e.message));
+    } catch (_) {
+      emit(const AuthUnauthenticated(message: 'Google sign-in failed'));
     }
   }
 

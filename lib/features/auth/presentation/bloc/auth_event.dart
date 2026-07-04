@@ -43,3 +43,7 @@ final class AuthRegisterRequested extends AuthEvent {
 final class AuthLogoutRequested extends AuthEvent {
   const AuthLogoutRequested();
 }
+
+final class AuthGoogleSignInRequested extends AuthEvent {
+  const AuthGoogleSignInRequested();
+}

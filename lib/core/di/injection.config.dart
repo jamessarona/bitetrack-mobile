@@ -15,6 +15,8 @@ import 'package:bitetrack/features/auth/data/datasources/auth_remote_datasource.
     as _i806;
 import 'package:bitetrack/features/auth/data/repositories/auth_repository_impl.dart'
     as _i920;
+import 'package:bitetrack/features/auth/data/services/google_sign_in_service.dart'
+    as _i584;
 import 'package:bitetrack/features/auth/domain/repositories/auth_repository.dart'
     as _i642;
 import 'package:bitetrack/features/auth/domain/usecases/auth_usecases.dart'
@@ -32,6 +34,9 @@ extension GetItInjectableX on _i174.GetIt {
     _i526.EnvironmentFilter? environmentFilter,
   }) {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
+    gh.lazySingleton<_i584.GoogleSignInService>(
+      () => _i584.GoogleSignInService(),
+    );
     gh.lazySingleton<_i311.TokenStorage>(
       () => _i311.TokenStorage(gh<_i460.SharedPreferences>()),
     );
@@ -45,6 +50,7 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i920.AuthRepositoryImpl(
         gh<_i806.AuthRemoteDataSource>(),
         gh<_i311.TokenStorage>(),
+        gh<_i584.GoogleSignInService>(),
       ),
     );
     gh.factory<_i108.LoginUseCase>(
@@ -59,12 +65,19 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i108.LogoutUseCase>(
       () => _i108.LogoutUseCase(gh<_i642.AuthRepository>()),
     );
+    gh.factory<_i108.GoogleSignInUseCase>(
+      () => _i108.GoogleSignInUseCase(
+        gh<_i642.AuthRepository>(),
+        gh<_i584.GoogleSignInService>(),
+      ),
+    );
     gh.factory<_i1041.AuthBloc>(
       () => _i1041.AuthBloc(
         getCurrentUser: gh<_i108.GetCurrentUserUseCase>(),
         login: gh<_i108.LoginUseCase>(),
         register: gh<_i108.RegisterUseCase>(),
         logout: gh<_i108.LogoutUseCase>(),
+        googleSignIn: gh<_i108.GoogleSignInUseCase>(),
       ),
     );
     return this;

@@ -49,6 +49,18 @@ class AuthRemoteDataSource {
     }
   }
 
+  Future<AuthResponseModel> googleSignIn({required String idToken}) async {
+    try {
+      final response = await _client.dio.post<Map<String, dynamic>>(
+        '/auth/google',
+        data: {'idToken': idToken},
+      );
+      return AuthResponseModel.fromJson(response.data!);
+    } on DioException catch (e) {
+      throw _mapDioError(e);
+    }
+  }
+
   Future<UserModel> me() async {
     try {
       final response = await _client.dio.get<Map<String, dynamic>>('/auth/me');

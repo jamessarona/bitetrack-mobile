@@ -6,6 +6,7 @@ class EnvConfig {
     required this.apiBaseUrl,
     required this.realtimeUrl,
     required this.googleMapsApiKey,
+    required this.googleClientId,
     required this.enableAnalytics,
     required this.environment,
   });
@@ -14,6 +15,7 @@ class EnvConfig {
   final String apiBaseUrl;
   final String realtimeUrl;
   final String googleMapsApiKey;
+  final String googleClientId;
   final bool enableAnalytics;
   final String environment;
 
@@ -36,6 +38,7 @@ class EnvConfig {
       apiBaseUrl: dotenv.get('API_BASE_URL'),
       realtimeUrl: dotenv.get('REALTIME_URL'),
       googleMapsApiKey: dotenv.get('GOOGLE_MAPS_API_KEY', fallback: ''),
+      googleClientId: dotenv.get('GOOGLE_CLIENT_ID', fallback: ''),
       enableAnalytics: dotenv.get('ENABLE_ANALYTICS', fallback: 'false') == 'true',
       environment: environment,
     );
