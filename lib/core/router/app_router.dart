@@ -2,12 +2,16 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:bitetrack/core/presentation/app_shell.dart';
 import 'package:bitetrack/core/presentation/splash_page.dart';
 import 'package:bitetrack/core/di/injection.dart';
 import 'package:bitetrack/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:bitetrack/features/auth/presentation/pages/login_page.dart';
 import 'package:bitetrack/features/auth/presentation/pages/register_page.dart';
 import 'package:bitetrack/features/home/presentation/pages/home_page.dart';
+import 'package:bitetrack/features/settings/presentation/pages/settings_page.dart';
+import 'package:bitetrack/features/settings/presentation/pages/theme_settings_page.dart';
+import 'package:bitetrack/features/profile/presentation/pages/profile_page.dart';
 
 class AppRouter {
   AppRouter(this._authBloc);
@@ -52,9 +56,26 @@ class AppRouter {
         path: '/register',
         builder: (context, state) => const RegisterPage(),
       ),
-      GoRoute(
-        path: '/home',
-        builder: (context, state) => const HomePage(),
+      ShellRoute(
+        builder: (context, state, child) => AppShell(child: child),
+        routes: [
+          GoRoute(
+            path: '/home',
+            builder: (context, state) => const HomePage(),
+          ),
+          GoRoute(
+            path: '/profile',
+            builder: (context, state) => const ProfilePage(),
+          ),
+          GoRoute(
+            path: '/settings',
+            builder: (context, state) => const SettingsPage(),
+          ),
+          GoRoute(
+            path: '/settings/theme',
+            builder: (context, state) => const ThemeSettingsPage(),
+          ),
+        ],
       ),
     ],
   );
