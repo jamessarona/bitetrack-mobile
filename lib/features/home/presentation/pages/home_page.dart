@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:bitetrack/core/theme/app_colors.dart';
 import 'package:bitetrack/features/auth/presentation/bloc/auth_bloc.dart';
@@ -58,13 +59,7 @@ class HomePage extends StatelessWidget {
             _MapPreviewCard(isDark: isDark),
             const SizedBox(height: 16),
             _VendorSetupCard(
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Vendor onboarding is coming soon'),
-                  ),
-                );
-              },
+              onTap: () => context.push('/businesses'),
             ),
             const SizedBox(height: 24),
             Text(
@@ -225,7 +220,7 @@ class _VendorSetupCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Set up your vendor profile, products, and stores later from settings.',
+                      'Add your shop or brand and list products. You can run multiple businesses.',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: Theme.of(context).colorScheme.onSurfaceVariant,
                             height: 1.4,

@@ -12,6 +12,8 @@ import 'package:bitetrack/features/home/presentation/pages/home_page.dart';
 import 'package:bitetrack/features/settings/presentation/pages/settings_page.dart';
 import 'package:bitetrack/features/settings/presentation/pages/theme_settings_page.dart';
 import 'package:bitetrack/features/profile/presentation/pages/profile_page.dart';
+import 'package:bitetrack/features/business/domain/entities/business.dart';
+import 'package:bitetrack/features/business/presentation/pages/my_businesses_page.dart';
 
 class AppRouter {
   AppRouter(this._authBloc);
@@ -70,10 +72,32 @@ class AppRouter {
           GoRoute(
             path: '/settings',
             builder: (context, state) => const SettingsPage(),
+            routes: [
+              GoRoute(
+                path: 'theme',
+                builder: (context, state) => const ThemeSettingsPage(),
+              ),
+            ],
           ),
           GoRoute(
-            path: '/settings/theme',
-            builder: (context, state) => const ThemeSettingsPage(),
+            path: '/businesses',
+            builder: (context, state) => const MyBusinessesPage(),
+            routes: [
+              GoRoute(
+                path: 'new',
+                builder: (context, state) => const CreateBusinessPage(),
+              ),
+              GoRoute(
+                path: ':businessId',
+                builder: (context, state) {
+                  final business = state.extra as Business?;
+                  if (business == null) {
+                    return const MyBusinessesPage();
+                  }
+                  return BusinessDetailPage(business: business);
+                },
+              ),
+            ],
           ),
         ],
       ),

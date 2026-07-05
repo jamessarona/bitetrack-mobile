@@ -54,9 +54,10 @@ class SettingsPage extends StatelessWidget {
             children: [
               ListTile(
                 leading: Icon(Icons.storefront_outlined, color: colorScheme.primary),
-                title: const Text('Vendor setup'),
-                subtitle: const Text('List products and manage stores — coming soon'),
-                enabled: false,
+                title: const Text('My businesses'),
+                subtitle: const Text('Manage shops, brands, and products'),
+                trailing: const Icon(Icons.chevron_right_rounded),
+                onTap: () => context.push('/businesses'),
               ),
               const Divider(height: 1, indent: 56),
               ListTile(

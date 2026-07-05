@@ -65,7 +65,7 @@ class _RegisterPageState extends State<RegisterPage> {
         final loading = state is AuthLoading;
         return AuthPageShell(
           title: 'Create account',
-          subtitle: 'Join BiteTrack to discover vendors near you. Vendor setup comes later.',
+          subtitle: 'Join BiteTrack to discover food near you. Add your shop anytime from settings.',
           child: Form(
             key: _formKey,
             child: Column(
