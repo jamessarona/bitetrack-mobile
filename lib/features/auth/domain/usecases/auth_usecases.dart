@@ -25,8 +25,8 @@ class RegisterUseCase {
   Future<AuthSession> call({
     required String email,
     required String password,
-    String? firstName,
-    String? lastName,
+    required String firstName,
+    required String lastName,
   }) {
     return _repository.register(
       email: email,

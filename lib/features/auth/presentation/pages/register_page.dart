@@ -34,19 +34,21 @@ class _RegisterPageState extends State<RegisterPage> {
           AuthRegisterRequested(
             email: _emailController.text.trim(),
             password: _passwordController.text,
-            firstName: _optionalText(_firstNameController.text),
-            lastName: _optionalText(_lastNameController.text),
+            firstName: _firstNameController.text.trim(),
+            lastName: _lastNameController.text.trim(),
           ),
         );
   }
 
-  String? _optionalText(String value) {
-    final trimmed = value.trim();
-    return trimmed.isEmpty ? null : trimmed;
-  }
-
   void _googleSignIn() {
     context.read<AuthBloc>().add(const AuthGoogleSignInRequested());
+  }
+
+  String? _requiredName(String? value, String label) {
+    if (value == null || value.trim().isEmpty) {
+      return '$label is required';
+    }
+    return null;
   }
 
   @override
@@ -86,6 +88,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     labelText: 'First name',
                     prefixIcon: Icon(Icons.person_outline),
                   ),
+                  validator: (value) => _requiredName(value, 'First name'),
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
@@ -93,9 +96,10 @@ class _RegisterPageState extends State<RegisterPage> {
                   textInputAction: TextInputAction.next,
                   textCapitalization: TextCapitalization.words,
                   decoration: const InputDecoration(
-                    labelText: 'Last name (optional)',
+                    labelText: 'Last name',
                     prefixIcon: Icon(Icons.person_outline),
                   ),
+                  validator: (value) => _requiredName(value, 'Last name'),
                 ),
                 const SizedBox(height: 16),
                 TextFormField(

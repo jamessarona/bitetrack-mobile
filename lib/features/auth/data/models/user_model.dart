@@ -7,20 +7,22 @@ class UserModel {
     required this.email,
     required this.role,
     required this.status,
-    this.firstName,
-    this.lastName,
+    required this.firstName,
+    required this.lastName,
     this.phone,
     this.themePreference = 'SYSTEM',
+    this.businessCount = 0,
   });
 
   final String id;
   final String email;
   final String role;
   final String status;
-  final String? firstName;
-  final String? lastName;
+  final String firstName;
+  final String lastName;
   final String? phone;
   final String themePreference;
+  final int businessCount;
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
@@ -28,10 +30,11 @@ class UserModel {
       email: json['email'] as String,
       role: json['role'] as String,
       status: json['status'] as String,
-      firstName: json['firstName'] as String?,
-      lastName: json['lastName'] as String?,
+      firstName: json['firstName'] as String,
+      lastName: json['lastName'] as String,
       phone: json['phone'] as String?,
       themePreference: json['themePreference'] as String? ?? 'SYSTEM',
+      businessCount: json['businessCount'] as int? ?? 0,
     );
   }
 
@@ -45,13 +48,12 @@ class UserModel {
       lastName: lastName,
       phone: phone,
       themePreference: AppThemePreferenceX.fromApi(themePreference),
+      businessCount: businessCount,
     );
   }
 
   static UserRole _parseRole(String value) {
     switch (value.toUpperCase()) {
-      case 'VENDOR':
-        return UserRole.vendor;
       case 'ADMIN':
         return UserRole.admin;
       default:

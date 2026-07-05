@@ -35,8 +35,8 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<AuthSession> register({
     required String email,
     required String password,
-    String? firstName,
-    String? lastName,
+    required String firstName,
+    required String lastName,
   }) async {
     final response = await _remote.register(
       email: email,

@@ -29,8 +29,8 @@ class AuthRemoteDataSource {
   Future<AuthResponseModel> register({
     required String email,
     required String password,
-    String? firstName,
-    String? lastName,
+    required String firstName,
+    required String lastName,
   }) async {
     try {
       final response = await _client.dio.post<Map<String, dynamic>>(
@@ -38,8 +38,8 @@ class AuthRemoteDataSource {
         data: {
           'email': email,
           'password': password,
-          'firstName': ?firstName,
-          'lastName': ?lastName,
+          'firstName': firstName,
+          'lastName': lastName,
         },
       );
       return AuthResponseModel.fromJson(response.data!);

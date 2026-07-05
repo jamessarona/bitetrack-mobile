@@ -1,9 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:bitetrack/core/theme/theme_preference.dart';
 
-/// Internal account type from the API. Users start as [UserRole.customer];
-/// vendor profiles and stores are enabled later through onboarding.
-enum UserRole { customer, vendor, admin }
+/// Account type from the API. Seller status is derived from [businessCount], not role.
+enum UserRole { customer, admin }
 
 class User extends Equatable {
   const User({
@@ -11,23 +10,27 @@ class User extends Equatable {
     required this.email,
     required this.role,
     required this.status,
-    this.firstName,
-    this.lastName,
+    required this.firstName,
+    required this.lastName,
     this.phone,
     this.themePreference = AppThemePreference.system,
+    this.businessCount = 0,
   });
 
   final String id;
   final String email;
   final UserRole role;
   final String status;
-  final String? firstName;
-  final String? lastName;
+  final String firstName;
+  final String lastName;
   final String? phone;
   final AppThemePreference themePreference;
+  final int businessCount;
+
+  bool get hasBusinesses => businessCount > 0;
 
   String get displayName {
-    final name = [firstName, lastName].where((p) => p != null && p.isNotEmpty).join(' ');
+    final name = [firstName, lastName].where((part) => part.trim().isNotEmpty).join(' ');
     return name.isNotEmpty ? name : email;
   }
 
@@ -36,6 +39,7 @@ class User extends Equatable {
     String? lastName,
     String? phone,
     AppThemePreference? themePreference,
+    int? businessCount,
   }) {
     return User(
       id: id,
@@ -46,6 +50,7 @@ class User extends Equatable {
       lastName: lastName ?? this.lastName,
       phone: phone ?? this.phone,
       themePreference: themePreference ?? this.themePreference,
+      businessCount: businessCount ?? this.businessCount,
     );
   }
 
@@ -59,6 +64,7 @@ class User extends Equatable {
         lastName,
         phone,
         themePreference,
+        businessCount,
       ];
 }
 

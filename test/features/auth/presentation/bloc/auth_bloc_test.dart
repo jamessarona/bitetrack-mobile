@@ -23,6 +23,7 @@ const testUser = User(
   role: UserRole.customer,
   status: 'ACTIVE',
   firstName: 'Test',
+  lastName: 'User',
 );
 
 const testSession = AuthSession(

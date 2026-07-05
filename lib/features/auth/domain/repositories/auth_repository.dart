@@ -18,8 +18,8 @@ abstract class AuthRepository {
   Future<AuthSession> register({
     required String email,
     required String password,
-    String? firstName,
-    String? lastName,
+    required String firstName,
+    required String lastName,
   });
   Future<AuthSession> googleSignIn({required String idToken});
   Future<User?> getCurrentUser();
