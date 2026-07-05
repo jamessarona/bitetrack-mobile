@@ -6,10 +6,19 @@ import 'package:bitetrack/core/widgets/profile_avatar.dart';
 import 'package:bitetrack/features/auth/domain/entities/user.dart';
 import 'package:bitetrack/features/auth/presentation/bloc/auth_bloc.dart';
 
-class AppShell extends StatelessWidget {
+class AppShell extends StatefulWidget {
   const AppShell({super.key, required this.child});
 
   final Widget child;
+
+  @override
+  State<AppShell> createState() => _AppShellState();
+}
+
+class _AppShellState extends State<AppShell> {
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  bool _showBackButton(String location) => location == '/settings/theme';
 
   @override
   Widget build(BuildContext context) {
@@ -17,21 +26,21 @@ class AppShell extends StatelessWidget {
       builder: (context, state) {
         final user = state is AuthAuthenticated ? state.user : null;
         final location = GoRouterState.of(context).matchedLocation;
-        final canPop = context.canPop();
 
         return Scaffold(
+          key: _scaffoldKey,
           appBar: AppBar(
-            leading: canPop
-                ? const BackButton()
+            leading: _showBackButton(location)
+                ? BackButton(onPressed: () => context.pop())
                 : IconButton(
                     icon: const Icon(Icons.menu_rounded),
                     tooltip: 'Menu',
-                    onPressed: () => Scaffold.of(context).openDrawer(),
+                    onPressed: () => _scaffoldKey.currentState?.openDrawer(),
                   ),
             title: _ShellTitle(location: location),
           ),
           drawer: user == null ? null : _AppDrawer(user: user),
-          body: child,
+          body: widget.child,
         );
       },
     );
@@ -209,9 +218,13 @@ class _AppDrawer extends StatelessWidget {
   }
 
   void _navigate(BuildContext context, String path) {
+    final router = GoRouter.of(context);
+    final current = GoRouterState.of(context).matchedLocation;
+
     Navigator.pop(context);
-    if (GoRouterState.of(context).matchedLocation != path) {
-      context.go(path);
+
+    if (current != path) {
+      router.go(path);
     }
   }
 }
