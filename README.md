@@ -2,6 +2,8 @@
 
 **Track your next bite.** Cross-platform Flutter app for real-time mobile vendor discovery and tracking.
 
+> **AI agents:** Start with [`AGENTS.md`](AGENTS.md) and [`docs/BITETRACK_PRODUCT.md`](docs/BITETRACK_PRODUCT.md) for product scope and implementation truths.
+
 Built with **Flutter**, **BLoC**, **Clean Architecture**, **get_it + injectable**, and **Dio**.
 
 ---
