@@ -7,6 +7,7 @@ import 'package:bitetrack/core/di/injection.dart';
 import 'package:bitetrack/core/error/failures.dart';
 import 'package:bitetrack/features/business/data/repositories/business_repository.dart';
 import 'package:bitetrack/features/business/domain/entities/business.dart';
+import 'package:bitetrack/features/business/presentation/widgets/selling_panel.dart';
 
 class MyBusinessesPage extends StatefulWidget {
   const MyBusinessesPage({super.key});
@@ -108,7 +109,29 @@ class _MyBusinessesPageState extends State<MyBusinessesPage> {
                     ),
                     title: Text(business.businessName),
                     subtitle: Text(_statusLabel(business)),
-                    trailing: const Icon(Icons.chevron_right_rounded),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (business.isLive)
+                          Container(
+                            margin: const EdgeInsets.only(right: 8),
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: Colors.green.withValues(alpha: 0.12),
+                              borderRadius: BorderRadius.circular(999),
+                            ),
+                            child: const Text(
+                              'LIVE',
+                              style: TextStyle(
+                                color: Colors.green,
+                                fontWeight: FontWeight.w800,
+                                fontSize: 11,
+                              ),
+                            ),
+                          ),
+                        const Icon(Icons.chevron_right_rounded),
+                      ],
+                    ),
                     onTap: () async {
                       final updated = await context.push<bool>(
                         '/businesses/${business.id}',
@@ -134,7 +157,8 @@ class _MyBusinessesPageState extends State<MyBusinessesPage> {
       BusinessVerificationStatus.rejected => 'Rejected',
       BusinessVerificationStatus.pending => 'Pending review',
     };
-    return '$verification · ${business.reviewCount} reviews';
+    final live = business.isLive ? ' · Live on map' : '';
+    return '$verification · ${business.reviewCount} reviews$live';
   }
 
   String _errorMessage(Object? error) {
@@ -337,16 +361,26 @@ class BusinessDetailPage extends StatefulWidget {
 class _BusinessDetailPageState extends State<BusinessDetailPage> {
   final _repository = getIt<BusinessRepository>();
   late Future<List<Product>> _productsFuture;
+  late Business _business;
+  var _liveStatusChanged = false;
 
   @override
   void initState() {
     super.initState();
-    _productsFuture = _repository.listProducts(widget.business.id);
+    _business = widget.business;
+    _productsFuture = _repository.listProducts(_business.id);
+  }
+
+  void _onBusinessUpdated(Business business) {
+    setState(() {
+      _business = business;
+      _liveStatusChanged = true;
+    });
   }
 
   void _reload() {
     setState(() {
-      _productsFuture = _repository.listProducts(widget.business.id);
+      _productsFuture = _repository.listProducts(_business.id);
     });
   }
 
@@ -355,7 +389,7 @@ class _BusinessDetailPageState extends State<BusinessDetailPage> {
       context: context,
       isScrollControlled: true,
       builder: (context) => _ProductFormSheet(
-        businessId: widget.business.id,
+        businessId: _business.id,
         repository: _repository,
       ),
     );
@@ -366,77 +400,95 @@ class _BusinessDetailPageState extends State<BusinessDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(widget.business.businessName)),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _addProduct,
-        icon: const Icon(Icons.add),
-        label: const Text('Add product'),
-      ),
-      body: FutureBuilder<List<Product>>(
-        future: _productsFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        context.pop(_liveStatusChanged ? true : null);
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(_business.businessName),
+          leading: BackButton(
+            onPressed: () => context.pop(_liveStatusChanged ? true : null),
+          ),
+        ),
+        floatingActionButton: FloatingActionButton.extended(
+          onPressed: _addProduct,
+          icon: const Icon(Icons.add),
+          label: const Text('Add product'),
+        ),
+        body: FutureBuilder<List<Product>>(
+          future: _productsFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-          if (snapshot.hasError) {
-            return _ErrorState(
-              message: snapshot.error is Failure
-                  ? (snapshot.error! as Failure).message
-                  : 'Failed to load products',
-              onRetry: _reload,
-            );
-          }
+            if (snapshot.hasError) {
+              return _ErrorState(
+                message: snapshot.error is Failure
+                    ? (snapshot.error! as Failure).message
+                    : 'Failed to load products',
+                onRetry: _reload,
+              );
+            }
 
-          final products = snapshot.data ?? [];
-          return ListView(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 88),
-            children: [
-              if (widget.business.logoUrl != null)
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Image.network(widget.business.logoUrl!, height: 120, fit: BoxFit.cover),
+            final products = snapshot.data ?? [];
+            return ListView(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 88),
+              children: [
+                SellingPanel(
+                  business: _business,
+                  repository: _repository,
+                  onBusinessUpdated: _onBusinessUpdated,
                 ),
-              if (widget.business.description != null) ...[
                 const SizedBox(height: 16),
-                Text(widget.business.description!),
-              ],
-              const SizedBox(height: 24),
-              Text('Products', style: Theme.of(context).textTheme.titleMedium),
-              const SizedBox(height: 8),
-              if (products.isEmpty)
-                Text(
-                  'No products yet. Add your menu items or catalog.',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
-                )
-              else
-                ...products.map(
-                  (product) => Card(
-                    child: ListTile(
-                      leading: product.imageUrl != null
-                          ? ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: Image.network(product.imageUrl!, width: 48, height: 48, fit: BoxFit.cover),
-                            )
-                          : const Icon(Icons.fastfood_outlined),
-                      title: Text(product.name),
-                      subtitle: Text(
-                        product.description ??
-                            '${product.currency} ${(product.priceCents / 100).toStringAsFixed(2)}',
-                      ),
-                      trailing: Icon(
-                        product.isAvailable ? Icons.check_circle_outline : Icons.pause_circle_outline,
-                        color: product.isAvailable ? Colors.green : Colors.grey,
+                if (_business.logoUrl != null)
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.network(_business.logoUrl!, height: 120, fit: BoxFit.cover),
+                  ),
+                if (_business.description != null) ...[
+                  const SizedBox(height: 16),
+                  Text(_business.description!),
+                ],
+                const SizedBox(height: 24),
+                Text('Products', style: Theme.of(context).textTheme.titleMedium),
+                const SizedBox(height: 8),
+                if (products.isEmpty)
+                  Text(
+                    'No products yet. Add your menu items or catalog.',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                  )
+                else
+                  ...products.map(
+                    (product) => Card(
+                      child: ListTile(
+                        leading: product.imageUrl != null
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: Image.network(product.imageUrl!, width: 48, height: 48, fit: BoxFit.cover),
+                              )
+                            : const Icon(Icons.fastfood_outlined),
+                        title: Text(product.name),
+                        subtitle: Text(
+                          product.description ??
+                              '${product.currency} ${(product.priceCents / 100).toStringAsFixed(2)}',
+                        ),
+                        trailing: Icon(
+                          product.isAvailable ? Icons.check_circle_outline : Icons.pause_circle_outline,
+                          color: product.isAvailable ? Colors.green : Colors.grey,
+                        ),
                       ),
                     ),
                   ),
-                ),
-            ],
-          );
-        },
+              ],
+            );
+          },
+        ),
       ),
     );
   }

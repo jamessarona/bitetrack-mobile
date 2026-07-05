@@ -13,6 +13,12 @@ class BusinessModel {
     required this.averageRating,
     required this.reviewCount,
     this.categoryId,
+    this.latitude,
+    this.longitude,
+    this.distanceMeters,
+    this.isLive = false,
+    this.activeShiftId,
+    this.lastSeenAt,
   });
 
   factory BusinessModel.fromJson(Map<String, dynamic> json) {
@@ -28,6 +34,14 @@ class BusinessModel {
       averageRating: (json['averageRating'] as num).toDouble(),
       reviewCount: json['reviewCount'] as int,
       categoryId: json['categoryId'] as String?,
+      latitude: (json['latitude'] as num?)?.toDouble(),
+      longitude: (json['longitude'] as num?)?.toDouble(),
+      distanceMeters: (json['distanceMeters'] as num?)?.toDouble(),
+      isLive: json['isLive'] as bool? ?? false,
+      activeShiftId: json['activeShiftId'] as String?,
+      lastSeenAt: json['lastSeenAt'] != null
+          ? DateTime.tryParse(json['lastSeenAt'] as String)
+          : null,
     );
   }
 
@@ -42,6 +56,12 @@ class BusinessModel {
   final double averageRating;
   final int reviewCount;
   final String? categoryId;
+  final double? latitude;
+  final double? longitude;
+  final double? distanceMeters;
+  final bool isLive;
+  final String? activeShiftId;
+  final DateTime? lastSeenAt;
 
   Business toEntity() {
     return Business(
@@ -56,6 +76,12 @@ class BusinessModel {
       averageRating: averageRating,
       reviewCount: reviewCount,
       categoryId: categoryId,
+      latitude: latitude,
+      longitude: longitude,
+      distanceMeters: distanceMeters,
+      isLive: isLive,
+      activeShiftId: activeShiftId,
+      lastSeenAt: lastSeenAt,
     );
   }
 

@@ -15,6 +15,12 @@ class Business {
     required this.averageRating,
     required this.reviewCount,
     this.categoryId,
+    this.latitude,
+    this.longitude,
+    this.distanceMeters,
+    this.isLive = false,
+    this.activeShiftId,
+    this.lastSeenAt,
   });
 
   final String id;
@@ -28,6 +34,14 @@ class Business {
   final double averageRating;
   final int reviewCount;
   final String? categoryId;
+  final double? latitude;
+  final double? longitude;
+  final double? distanceMeters;
+  final bool isLive;
+  final String? activeShiftId;
+  final DateTime? lastSeenAt;
+
+  bool get canGoLive => verificationStatus == BusinessVerificationStatus.verified;
 }
 
 class Product {

@@ -28,6 +28,10 @@ import 'package:bitetrack/features/business/data/datasources/business_remote_dat
     as _i932;
 import 'package:bitetrack/features/business/data/repositories/business_repository.dart'
     as _i490;
+import 'package:bitetrack/features/business/data/services/live_selling_location_service.dart'
+    as _i105;
+import 'package:bitetrack/features/discover/data/discover_map_cache.dart'
+    as _i796;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:shared_preferences/shared_preferences.dart' as _i460;
@@ -43,6 +47,7 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i584.GoogleSignInService>(
       () => _i584.GoogleSignInService(),
     );
+    gh.lazySingleton<_i796.DiscoverMapCache>(() => _i796.DiscoverMapCache());
     gh.lazySingleton<_i311.TokenStorage>(
       () => _i311.TokenStorage(gh<_i460.SharedPreferences>()),
     );
@@ -57,6 +62,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i490.BusinessRepository>(
       () => _i490.BusinessRepository(gh<_i932.BusinessRemoteDataSource>()),
+    );
+    gh.lazySingleton<_i105.LiveSellingLocationService>(
+      () => _i105.LiveSellingLocationService(gh<_i490.BusinessRepository>()),
     );
     gh.lazySingleton<_i642.AuthRepository>(
       () => _i920.AuthRepositoryImpl(

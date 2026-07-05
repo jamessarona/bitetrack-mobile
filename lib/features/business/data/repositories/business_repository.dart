@@ -20,6 +20,23 @@ class BusinessRepository {
     }
   }
 
+  Future<List<Business>> listNearbyBusinesses({
+    required double latitude,
+    required double longitude,
+    int? radiusMeters,
+  }) async {
+    try {
+      final models = await _remote.listNearbyBusinesses(
+        latitude: latitude,
+        longitude: longitude,
+        radiusMeters: radiusMeters,
+      );
+      return models.map((model) => model.toEntity()).toList();
+    } on Failure {
+      rethrow;
+    }
+  }
+
   Future<List<Business>> listMyBusinesses() async {
     try {
       final models = await _remote.listMyBusinesses();
@@ -77,6 +94,49 @@ class BusinessRepository {
     try {
       final models = await _remote.listProducts(businessId);
       return models.map((model) => model.toEntity()).toList();
+    } on Failure {
+      rethrow;
+    }
+  }
+
+  Future<Business> startSelling({
+    required String businessId,
+    required double latitude,
+    required double longitude,
+  }) async {
+    try {
+      final model = await _remote.startSelling(
+        businessId: businessId,
+        latitude: latitude,
+        longitude: longitude,
+      );
+      return model.toEntity();
+    } on Failure {
+      rethrow;
+    }
+  }
+
+  Future<Business> stopSelling({required String businessId}) async {
+    try {
+      final model = await _remote.stopSelling(businessId: businessId);
+      return model.toEntity();
+    } on Failure {
+      rethrow;
+    }
+  }
+
+  Future<Business> updateSellingLocation({
+    required String businessId,
+    required double latitude,
+    required double longitude,
+  }) async {
+    try {
+      final model = await _remote.updateSellingLocation(
+        businessId: businessId,
+        latitude: latitude,
+        longitude: longitude,
+      );
+      return model.toEntity();
     } on Failure {
       rethrow;
     }

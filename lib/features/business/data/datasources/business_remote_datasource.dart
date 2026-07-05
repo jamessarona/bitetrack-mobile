@@ -22,6 +22,27 @@ class BusinessRemoteDataSource {
     });
   }
 
+  Future<List<BusinessModel>> listNearbyBusinesses({
+    required double latitude,
+    required double longitude,
+    int? radiusMeters,
+  }) async {
+    return _wrap(() async {
+      final response = await _client.dio.get<Map<String, dynamic>>(
+        '/businesses/nearby',
+        queryParameters: {
+          'lat': latitude,
+          'lng': longitude,
+          'radiusMeters': ?radiusMeters,
+        },
+      );
+      final data = response.data!['data'] as List<dynamic>;
+      return data
+          .map((item) => BusinessModel.fromJson(item as Map<String, dynamic>))
+          .toList();
+    });
+  }
+
   Future<List<BusinessModel>> listMyBusinesses() async {
     return _wrap(() async {
       final response = await _client.dio.get<Map<String, dynamic>>('/me/businesses');
@@ -157,6 +178,46 @@ class BusinessRemoteDataSource {
       );
       final data = response.data!['data'] as Map<String, dynamic>;
       return UploadSessionModel.fromJson(data);
+    });
+  }
+
+  Future<BusinessModel> startSelling({
+    required String businessId,
+    required double latitude,
+    required double longitude,
+  }) async {
+    return _wrap(() async {
+      final response = await _client.dio.post<Map<String, dynamic>>(
+        '/me/businesses/$businessId/selling/start',
+        data: {'latitude': latitude, 'longitude': longitude},
+      );
+      final data = response.data!['data'] as Map<String, dynamic>;
+      return BusinessModel.fromJson(data);
+    });
+  }
+
+  Future<BusinessModel> stopSelling({required String businessId}) async {
+    return _wrap(() async {
+      final response = await _client.dio.post<Map<String, dynamic>>(
+        '/me/businesses/$businessId/selling/stop',
+      );
+      final data = response.data!['data'] as Map<String, dynamic>;
+      return BusinessModel.fromJson(data);
+    });
+  }
+
+  Future<BusinessModel> updateSellingLocation({
+    required String businessId,
+    required double latitude,
+    required double longitude,
+  }) async {
+    return _wrap(() async {
+      final response = await _client.dio.post<Map<String, dynamic>>(
+        '/me/businesses/$businessId/selling/location',
+        data: {'latitude': latitude, 'longitude': longitude},
+      );
+      final data = response.data!['data'] as Map<String, dynamic>;
+      return BusinessModel.fromJson(data);
     });
   }
 
