@@ -19,7 +19,6 @@ class _ProfilePageState extends State<ProfilePage> {
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
   final _phoneController = TextEditingController();
-  final _emailController = TextEditingController();
 
   bool _isSaving = false;
   String? _syncedUserId;
@@ -29,16 +28,14 @@ class _ProfilePageState extends State<ProfilePage> {
     _firstNameController.dispose();
     _lastNameController.dispose();
     _phoneController.dispose();
-    _emailController.dispose();
     super.dispose();
   }
 
   void _syncFromUser(User user) {
     if (_syncedUserId == user.id) return;
-    _firstNameController.text = user.firstName ?? '';
-    _lastNameController.text = user.lastName ?? '';
+    _firstNameController.text = user.firstName;
+    _lastNameController.text = user.lastName;
     _phoneController.text = user.phone ?? '';
-    _emailController.text = user.email;
     _syncedUserId = user.id;
   }
 
@@ -101,7 +98,6 @@ class _ProfilePageState extends State<ProfilePage> {
                       displayName: user.displayName,
                       email: user.email,
                       size: 96,
-                      showEditBadge: true,
                     ),
                     const SizedBox(height: 12),
                     Text(
@@ -112,8 +108,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Photo upload coming soon',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      user.email,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                             color: colorScheme.onSurfaceVariant,
                           ),
                     ),
@@ -158,6 +154,12 @@ class _ProfilePageState extends State<ProfilePage> {
                           labelText: 'Last name',
                           prefixIcon: Icon(Icons.badge_outlined),
                         ),
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return 'Last name is required';
+                          }
+                          return null;
+                        },
                       ),
                       const SizedBox(height: 16),
                       TextFormField(
@@ -175,28 +177,12 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
               const SizedBox(height: 20),
-              Text(
-                'Account',
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
-                      fontWeight: FontWeight.w700,
-                    ),
-              ),
-              const SizedBox(height: 12),
               Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: TextFormField(
-                    controller: _emailController,
-                    readOnly: true,
-                    enabled: false,
-                    decoration: InputDecoration(
-                      labelText: 'Email',
-                      prefixIcon: Icon(Icons.email_outlined, color: colorScheme.onSurfaceVariant),
-                      suffixIcon: Icon(Icons.lock_outline, color: colorScheme.onSurfaceVariant),
-                      helperText: 'Email cannot be changed',
-                    ),
-                  ),
+                child: ListTile(
+                  leading: Icon(Icons.email_outlined, color: colorScheme.onSurfaceVariant),
+                  title: const Text('Email'),
+                  subtitle: Text(user.email),
+                  trailing: Icon(Icons.lock_outline, color: colorScheme.onSurfaceVariant),
                 ),
               ),
               const SizedBox(height: 28),
