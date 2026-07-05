@@ -45,6 +45,8 @@
 		<true/>
 		<key>UIApplicationSupportsIndirectInputEvents</key>
 		<true/>
+		<key>NSLocationWhenInUseUsageDescription</key>
+		<string>BiteTrack uses your location to show nearby mobile businesses on the map.</string>
 		<key>UIStatusBarHidden</key>
 		<false/>
 	</dict>

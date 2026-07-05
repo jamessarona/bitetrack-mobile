@@ -18,7 +18,27 @@ class AppShell extends StatefulWidget {
 class _AppShellState extends State<AppShell> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  bool _showBackButton(String location) => location == '/settings/theme';
+  bool _showBackButton(String location) {
+    return location == '/settings/theme' ||
+        location == '/discover/map' ||
+        location.startsWith('/businesses');
+  }
+
+  bool _isFullBleedRoute(String location) => location == '/discover/map';
+
+  void _handleBack(BuildContext context, String location) {
+    if (location == '/discover/map') {
+      if (context.canPop()) {
+        context.pop();
+      } else {
+        context.go('/home');
+      }
+      return;
+    }
+    if (context.canPop()) {
+      context.pop();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,19 +46,23 @@ class _AppShellState extends State<AppShell> {
       builder: (context, state) {
         final user = state is AuthAuthenticated ? state.user : null;
         final location = GoRouterState.of(context).matchedLocation;
+        final fullBleed = _isFullBleedRoute(location);
 
         return Scaffold(
           key: _scaffoldKey,
-          appBar: AppBar(
-            leading: _showBackButton(location)
-                ? BackButton(onPressed: () => context.pop())
-                : IconButton(
-                    icon: const Icon(Icons.menu_rounded),
-                    tooltip: 'Menu',
-                    onPressed: () => _scaffoldKey.currentState?.openDrawer(),
-                  ),
-            title: _ShellTitle(location: location),
-          ),
+          extendBodyBehindAppBar: fullBleed,
+          appBar: fullBleed
+              ? null
+              : AppBar(
+                  leading: _showBackButton(location)
+                      ? BackButton(onPressed: () => _handleBack(context, location))
+                      : IconButton(
+                          icon: const Icon(Icons.menu_rounded),
+                          tooltip: 'Menu',
+                          onPressed: () => _scaffoldKey.currentState?.openDrawer(),
+                        ),
+                  title: _ShellTitle(location: location),
+                ),
           drawer: user == null ? null : _AppDrawer(user: user),
           body: widget.child,
         );
@@ -81,6 +105,14 @@ class _ShellTitle extends StatelessWidget {
       return const Text('Appearance');
     }
 
+    if (location == '/discover/map') {
+      return const Text('Map');
+    }
+
+    if (location.startsWith('/businesses')) {
+      return const Text('My businesses');
+    }
+
     if (location == '/settings') {
       return const Text('Settings');
     }
@@ -105,59 +137,47 @@ class _AppDrawer extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            InkWell(
-              onTap: () => _navigate(context, '/profile'),
-              borderRadius: BorderRadius.circular(20),
-              child: Container(
-                margin: const EdgeInsets.all(16),
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  gradient: isDark ? AppDarkColors.brandGradient : AppColors.brandGradient,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ProfileAvatar(
-                      displayName: user.displayName,
-                      email: user.email,
-                      size: 64,
-                      showEditBadge: true,
+            Container(
+              margin: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                gradient: isDark ? AppDarkColors.brandGradient : AppColors.brandGradient,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Row(
+                children: [
+                  ProfileAvatar(
+                    displayName: user.displayName,
+                    email: user.email,
+                    size: 56,
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          user.displayName,
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w800,
+                              ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          user.email,
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: Colors.white.withValues(alpha: 0.82),
+                              ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 16),
-                    Text(
-                      user.displayName,
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w800,
-                          ),
-                    ),
-                    if (user.firstName != null || user.lastName != null) ...[
-                      const SizedBox(height: 4),
-                      Text(
-                        _profileSubtitle(user),
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Colors.white.withValues(alpha: 0.88),
-                            ),
-                      ),
-                    ],
-                    const SizedBox(height: 8),
-                    Text(
-                      user.email,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Colors.white.withValues(alpha: 0.78),
-                          ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'View profile',
-                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                            color: Colors.white.withValues(alpha: 0.9),
-                            fontWeight: FontWeight.w600,
-                          ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
             Padding(
@@ -204,17 +224,6 @@ class _AppDrawer extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  String _profileSubtitle(User user) {
-    final parts = <String>[];
-    if (user.firstName != null && user.firstName!.isNotEmpty) {
-      parts.add(user.firstName!);
-    }
-    if (user.lastName != null && user.lastName!.isNotEmpty) {
-      parts.add(user.lastName!);
-    }
-    return parts.join(' ');
   }
 
   void _navigate(BuildContext context, String path) {

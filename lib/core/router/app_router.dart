@@ -14,6 +14,7 @@ import 'package:bitetrack/features/settings/presentation/pages/theme_settings_pa
 import 'package:bitetrack/features/profile/presentation/pages/profile_page.dart';
 import 'package:bitetrack/features/business/domain/entities/business.dart';
 import 'package:bitetrack/features/business/presentation/pages/my_businesses_page.dart';
+import 'package:bitetrack/features/discover/presentation/pages/discover_map_page.dart';
 
 class AppRouter {
   AppRouter(this._authBloc);
@@ -64,6 +65,10 @@ class AppRouter {
           GoRoute(
             path: '/home',
             builder: (context, state) => const HomePage(),
+          ),
+          GoRoute(
+            path: '/discover/map',
+            builder: (context, state) => const DiscoverMapPage(),
           ),
           GoRoute(
             path: '/profile',
